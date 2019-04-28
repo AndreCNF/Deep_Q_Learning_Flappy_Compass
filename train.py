@@ -1,6 +1,3 @@
-"""
-@author: Viet Nguyen <nhviet1009@gmail.com>
-"""
 import argparse
 import os
 import shutil
@@ -9,11 +6,13 @@ from random import random, randint, sample
 import numpy as np
 import torch
 import torch.nn as nn
-from tensorboardX import SummaryWriter
 
 from src.deep_q_network import DeepQNetwork
 from src.flappy_bird import FlappyBird
 from src.utils import pre_processing
+
+# Iterations intervals when the model is saved
+iters_to_save = 1000000
 
 
 def get_args():
@@ -42,10 +41,6 @@ def train(opt):
     else:
         torch.manual_seed(123)
     model = DeepQNetwork()
-    if os.path.isdir(opt.log_path):
-        shutil.rmtree(opt.log_path)
-    os.makedirs(opt.log_path)
-    writer = SummaryWriter(opt.log_path)
     optimizer = torch.optim.Adam(model.parameters(), lr=1e-6)
     criterion = nn.MSELoss()
     game_state = FlappyBird()
@@ -70,8 +65,8 @@ def train(opt):
             print("Perform a random action")
             action = randint(0, 1)
         else:
-
-            action = torch.argmax(prediction)[0]
+            # Use the model's prediction to decide the next action
+            action = torch.argmax(prediction).item()
 
         next_image, reward, terminal = game_state.next_frame(action)
         next_image = pre_processing(next_image[:game_state.screen_width, :int(game_state.base_y)], opt.image_size,
@@ -119,12 +114,15 @@ def train(opt):
             action,
             loss,
             epsilon, reward, torch.max(prediction)))
-        writer.add_scalar('Train/Loss', loss, iter)
-        writer.add_scalar('Train/Epsilon', epsilon, iter)
-        writer.add_scalar('Train/Reward', reward, iter)
-        writer.add_scalar('Train/Q-value', torch.max(prediction), iter)
-        if (iter+1) % 1000000 == 0:
+        # writer.add_scalar('Train/Loss', loss, iter)
+        # writer.add_scalar('Train/Epsilon', epsilon, iter)
+        # writer.add_scalar('Train/Reward', reward, iter)
+        # writer.add_scalar('Train/Q-value', torch.max(prediction), iter)
+        if (iter+1) % iters_to_save == 0:
+            # Save model every iters_to_save iterations
             torch.save(model, "{}/flappy_bird_{}".format(opt.saved_path, iter+1))
+
+    # Save the model after reaching the final iteration
     torch.save(model, "{}/flappy_bird".format(opt.saved_path))
 
 
