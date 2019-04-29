@@ -1,0 +1,19 @@
+python train.py --image_size 84
+                --lr 0.000001
+                --initial_epsilon 0.1
+                --num_iters 2000000
+                --replay_memory_size 50000
+                --conv_dim 32 64 64
+                --conv_kernel_sizes 8 4 3
+                --conv_strides 4 2 1
+                --fc_dim 512
+                --log_comet_ml True
+                --comet_ml_api_key ...
+                --comet_ml_project_name deep-q-learning-flappy-compass
+                --comet_ml_workspace andrecnf
+                --comet_ml_save_model True
+
+
+python train.py --image_size 84 --lr 0.000001 --initial_epsilon 0.1 --num_iters 2000000 --replay_memory_size 50000 --conv_dim 32 64 64 --conv_kernel_sizes 8 4 3 --conv_strides 4 2 1 --fc_dim 512 --log_comet_ml True --comet_ml_api_key ... --comet_ml_project_name deep-q-learning-flappy-compass --comet_ml_workspace andrecnf --comet_ml_save_model True
+
+paperspace jobs create --container python:3.7 --machineType K80 --command 'pip3 install -r requirements.txt; python3 train.py --image_size 84 --lr 0.000001 --initial_epsilon 0.1 --num_iters 2000000 --replay_memory_size 50000 --conv_dim 32 64 64 --conv_kernel_sizes 8 4 3 --conv_strides 4 2 1 --fc_dim 512 --log_comet_ml True --comet_ml_api_key ... --comet_ml_project_name deep-q-learning-flappy-compass --comet_ml_workspace andrecnf --comet_ml_save_model True' --project deep-q-learning-flappy-compass --apiKey ...

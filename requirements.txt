@@ -1,0 +1,5 @@
+torch
+numpy
+comet_ml
+pygame
+opencv-python
